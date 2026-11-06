@@ -1,0 +1,89 @@
+topic: devices-topologies
+domain: 1
+blueprint: "1.1"
+cards:
+  - id: dev-001
+    front: "Router vs Layer 2 switch vs Layer 3 switch?"
+    back: "Router: forwards between networks by IP, separates broadcast domains.\nL2 switch: forwards frames by MAC within a VLAN.\nL3 switch: switch that can also route between VLANs (SVIs) in hardware."
+  - id: dev-002
+    front: "What does a next-generation firewall (NGFW) add over a classic firewall?"
+    back: "Application awareness, an integrated IPS, URL filtering, and malware protection, beyond port and IP filtering."
+  - id: dev-003
+    front: "IDS vs IPS?"
+    back: "IDS watches a copy of the traffic and alerts.\nIPS sits inline and can block traffic."
+  - id: dev-004
+    front: "Role of a wireless LAN controller (WLC)?"
+    back: "Centrally manages lightweight APs: config, RF tuning, roaming, security, client authentication."
+  - id: dev-005
+    front: "What is PoE and the main standards?"
+    back: "Power over Ethernet: the switch powers devices (APs, phones, cameras) over the data cable.\n802.3af PoE ~15.4 W, 802.3at PoE+ ~30 W, 802.3bt up to 60/90 W."
+  - id: dev-006
+    front: "Two-tier (collapsed core) vs three-tier campus?"
+    back: "Two-tier: access + combined distribution/core. For smaller campuses.\nThree-tier: access, distribution, core. Core is fast transport between distribution blocks."
+  - id: dev-007
+    front: "Spine-leaf: rules?"
+    back: "Data center design. Every leaf connects to every spine; leaves never connect to leaves, spines never to spines. Any leaf is 2 hops from any other: predictable latency."
+  - id: dev-008
+    front: "What is a SOHO network?"
+    back: "Small office/home office: usually one device doing routing, switching, wireless and firewall/NAT."
+  - id: dev-009
+    front: "Endpoints vs servers?"
+    back: "Endpoints are user devices (PCs, phones, IoT) that consume services; servers provide services (web, DNS, DHCP, file)."
+  - id: dev-010
+    front: "On-premises vs cloud: who manages what?"
+    back: "On-prem: you own and run the hardware. Cloud (IaaS/PaaS/SaaS): the provider runs some or all of the stack; you pay as you use it."
+  - id: virt-001
+    topic: virtualization
+    blueprint: "1.12"
+    front: "Type 1 vs Type 2 hypervisor?"
+    back: "Type 1 (bare metal) runs directly on hardware: ESXi, Proxmox/KVM, Hyper-V.\nType 2 runs on a host OS: VirtualBox, VMware Workstation."
+  - id: virt-002
+    topic: virtualization
+    blueprint: "1.12"
+    front: "VM vs container?"
+    back: "VM: full guest OS on a hypervisor; heavier, strong isolation.\nContainer: shares the host kernel, packages only the app and its libraries; lighter and faster to start."
+  - id: virt-003
+    topic: virtualization
+    blueprint: "1.12"
+    front: "What is a VRF?"
+    back: "Virtual Routing and Forwarding: several separate routing tables on one router. Overlapping IP ranges can exist in different VRFs."
+  - id: wl-001
+    topic: wireless-basics
+    blueprint: "1.11"
+    front: "Non-overlapping 2.4 GHz channels?"
+    back: "1, 6 and 11 (in North America)."
+  - id: wl-002
+    topic: wireless-basics
+    blueprint: "1.11"
+    front: "SSID vs BSSID?"
+    back: "SSID: the network name.\nBSSID: the MAC address of the AP radio serving that SSID."
+  - id: wl-003
+    topic: wireless-basics
+    blueprint: "1.11"
+    front: "2.4 GHz vs 5 GHz?"
+    back: "2.4 GHz: longer range, better through walls, only 3 non-overlapping channels, more interference.\n5 GHz: more channels, faster, shorter range."
+  - id: sw-001
+    topic: switching
+    blueprint: "1.13"
+    front: "How does a switch learn MAC addresses?"
+    back: "From the SOURCE MAC of incoming frames; it records MAC, port and VLAN in the MAC address table."
+  - id: sw-002
+    topic: switching
+    blueprint: "1.13"
+    front: "How does a switch forward a frame?"
+    back: "Known unicast: out the one port in the MAC table.\nUnknown unicast, broadcast, multicast: flood out all ports in the VLAN except the one it came in on."
+  - id: sw-003
+    topic: switching
+    blueprint: "1.13"
+    front: "Default MAC address table aging time on Cisco switches?"
+    back: "300 seconds (5 minutes)."
+  - id: sw-004
+    topic: switching
+    blueprint: "1.13"
+    front: "Command to view the MAC table?"
+    back: "show mac address-table (add 'dynamic' or 'interface g0/1' to filter)"
+  - id: sw-005
+    topic: switching
+    blueprint: "1.13"
+    front: "Switches vs hubs: collision and broadcast domains?"
+    back: "Each switch port is its own collision domain; a VLAN is one broadcast domain.\nA hub is one collision domain.\nRouters separate broadcast domains."

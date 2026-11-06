@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Practice question &middot; CCNA Daily{% endblock %}
+{% block content %}
+<div class="study-head">
+  <a class="back" href="{{ '/extra' if topic else '/' }}">&larr;</a>
+  <div>
+    <p class="eyebrow">{% if topic %}Extra &middot; {{ topic }}{% elif day_complete %}Extra &middot; Practice questions{% else %}Step 3 &middot; Practice questions{% endif %}</p>
+    <div class="counter"><b>{{ n }}</b>{% if not day_complete %} / {{ need }}{% endif %} answered today &middot; <b>{{ right }}</b> right</div>
+  </div>
+</div>
+
+<form class="panel question" method="post" action="/questions/{{ q.id }}">
+  <div class="flash-tags">
+    <span class="chip">{{ q.topic }}</span>
+    <span class="chip ghost">{{ q.blueprint }}</span>
+    <span class="chip ghost">Domain {{ q.domain }}</span>
+  </div>
+  <p class="q-text">{{ q.q }}</p>
+  {% if q.exhibit %}<pre class="exhibit">{{ q.exhibit }}</pre>{% endif %}
+  {% if q.multi %}<p class="muted small">Choose {{ q.answer|length }}.</p>{% endif %}
+  <input type="hidden" name="topic" value="{{ topic }}">
+  <div class="options">
+    {% for opt in q.options %}
+    {% set i = loop.index0 %}
+    {% set cls = '' %}
+    {% if chosen is not none %}
+      {% if i in q.answer %}{% set cls = 'right' %}{% elif i in chosen %}{% set cls = 'wrong' %}{% endif %}
+    {% endif %}
+    <label class="option {{ cls }}">
+      <input type="{{ 'checkbox' if q.multi else 'radio' }}" name="opt" value="{{ i }}"
+             {% if chosen is not none %}disabled {% if i in chosen %}checked{% endif %}{% endif %}>
+      <span class="letter">{{ 'ABCDEFGH'[i] }}</span>
+      <span>{{ opt }}</span>
+    </label>
+    {% endfor %}
+  </div>
+  {% if chosen is none %}
+  <button class="btn primary wide">Submit <kbd>Enter</kbd></button>
+  {% endif %}
+</form>
+
+{% if chosen is not none %}
+<div class="result {{ 'ok' if correct else 'bad' }}">
+  <b>{{ 'Correct' if correct else 'Incorrect' }}</b>
+  <div class="explain">{{ q.explain }}</div>
+</div>
+<a class="btn primary wide" id="next" href="/questions{{ '?topic=' ~ topic if topic else '' }}">Next question <kbd>Enter</kbd></a>
+{% if not day_complete and n >= need %}<a class="btn wide" href="/lab">Minimum done, go to the lab &rarr;</a>{% endif %}
+{% endif %}
+{% endblock %}

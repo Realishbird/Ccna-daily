@@ -1,0 +1,28 @@
+# Day-by-day plan. Topics must match the `topic` names used in cards/, questions/ and labs/.
+# A topic's cards and questions become available on the first day it appears.
+days:
+  - {date: 2026-11-06, title: "Setup and subnetting warm-up: binary, powers of 2, classes", topics: [subnetting]}
+  - {date: 2026-11-07, title: "Subnetting 1: CIDR, network/broadcast, host ranges", topics: [subnetting]}
+  - {date: 2026-11-08, title: "Subnetting 2: VLSM and summarization; IPv6 addressing", topics: [subnetting, ipv6]}
+  - {date: 2026-11-09, title: "OSI and TCP/IP, TCP vs UDP, ports, cabling", topics: [osi-tcpip, cabling]}
+  - {date: 2026-11-10, title: "Devices, topologies, wireless basics, virtualization, switching", topics: [devices-topologies, wireless-basics, virtualization, switching]}
+  - {date: 2026-11-11, title: "VLANs, 802.1Q trunks, inter-VLAN routing", topics: [vlans]}
+  - {date: 2026-11-12, title: "Rapid PVST+, EtherChannel, CDP/LLDP", topics: [stp, etherchannel, discovery]}
+  - {date: 2026-11-13, title: "Wireless architectures, AP modes, WLC, management access", topics: [wireless-arch, mgmt-access]}
+  - {date: 2026-11-14, title: "Routing table and route selection", topics: [routing]}
+  - {date: 2026-11-15, title: "IPv4 and IPv6 static routes", topics: [static-routing]}
+  - {date: 2026-11-16, title: "OSPFv2 part 1: neighbors, router ID, config", topics: [ospf]}
+  - {date: 2026-11-17, title: "OSPFv2 part 2: DR/BDR, network types; FHRP", topics: [ospf, fhrp]}
+  - {date: 2026-11-18, title: "Routing and subnetting review day", topics: [routing, subnetting], kind: review}
+  - {date: 2026-11-19, title: "NAT, PAT, DHCP, DNS", topics: [nat, dhcp-dns]}
+  - {date: 2026-11-20, title: "NTP, SNMP, syslog, QoS, SSH, TFTP/FTP", topics: [ntp, snmp-syslog, qos, ssh-ftp]}
+  - {date: 2026-11-21, title: "Security concepts, passwords, AAA, VPNs", topics: [security-concepts, aaa, vpn]}
+  - {date: 2026-11-22, title: "Standard and extended ACLs", topics: [acl]}
+  - {date: 2026-11-23, title: "Port security, DHCP snooping, DAI, WPA2/WPA3", topics: [l2-security, wireless-security]}
+  - {date: 2026-11-24, title: "Automation: SDN, REST, JSON, Ansible/Terraform, AI/ML", topics: [automation]}
+  - {date: 2026-11-25, title: "Full mock exam 1 and review", topics: [], kind: mock}
+  - {date: 2026-11-26, title: "Weak spots: routing deep review", topics: [routing, ospf, static-routing], kind: review}
+  - {date: 2026-11-27, title: "Full mock exam 2 and review", topics: [], kind: mock}
+  - {date: 2026-11-28, title: "Weak spots: subnetting speed run, ACLs, NAT", topics: [subnetting, acl, nat], kind: review}
+  - {date: 2026-11-29, title: "Full mock exam 3, final blurting", topics: [], kind: mock}
+  - {date: 2026-11-30, title: "Light review, rest, readiness check", topics: [], kind: rest}

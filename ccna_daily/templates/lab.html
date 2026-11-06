@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{{ lab.title }} &middot; CCNA Daily{% endblock %}
+{% block content %}
+<div class="study-head">
+  <a class="back" href="/">&larr;</a>
+  <div>
+    <p class="eyebrow">{% if day_complete %}Extra &middot; {% else %}Step 4 &middot; {% endif %}Troubleshooting lab</p>
+    <div class="counter"><b>{{ lab.title }}</b></div>
+  </div>
+</div>
+
+<div class="lab-grid">
+  <section class="panel">
+    <h2>Scenario</h2>
+    <p class="pre-line">{{ lab.scenario }}</p>
+    {% if lab.topology %}<pre class="exhibit topo">{{ lab.topology }}</pre>{% endif %}
+  </section>
+
+  <section class="panel term">
+    <h2>Device output</h2>
+    <p class="muted small">Tap a command to run it.</p>
+    <div class="cmds">
+      {% for o in lab.outputs %}
+      <details {% if loop.first %}open{% endif %}>
+        <summary><code>{{ o.device }}# {{ o.cmd }}</code></summary>
+        <pre class="console">{{ o.text }}</pre>
+      </details>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+<form class="panel question" method="post" action="/lab/{{ lab.id }}">
+  <p class="q-text">{{ lab.question }}</p>
+  <div class="options">
+    {% for opt in lab.options %}
+    {% set i = loop.index0 %}
+    {% set cls = '' %}
+    {% if chosen is not none %}{% if i == lab.answer %}{% set cls = 'right' %}{% elif i == chosen %}{% set cls = 'wrong' %}{% endif %}{% endif %}
+    <label class="option {{ cls }}">
+      <input type="radio" name="opt" value="{{ i }}" required {% if chosen is not none %}disabled {% if i == chosen %}checked{% endif %}{% endif %}>
+      <span class="letter">{{ 'ABCDEFGH'[i] }}</span><span>{{ opt }}</span>
+    </label>
+    {% endfor %}
+  </div>
+  {% if chosen is none %}<button class="btn primary wide">Submit diagnosis</button>{% endif %}
+</form>
+
+{% if chosen is not none %}
+<div class="result {{ 'ok' if chosen == lab.answer else 'bad' }}">
+  <b>{{ 'Correct diagnosis' if chosen == lab.answer else 'Not the root cause' }}</b>
+  <div class="explain">{{ lab.explain }}</div>
+</div>
+<a class="btn primary wide" href="/">{{ 'Back to today' }}</a>
+{% if day_complete %}<a class="btn wide" href="/lab?any=1">Another lab</a>{% endif %}
+{% endif %}
+{% endblock %}

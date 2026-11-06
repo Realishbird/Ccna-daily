@@ -1,0 +1,34 @@
+topic: subnetting
+domain: 1
+blueprint: "1.7"
+cards:
+  - id: priv-001
+    front: "The three RFC 1918 private IPv4 ranges?"
+    back: "10.0.0.0/8\n172.16.0.0/12 (172.16.0.0 - 172.31.255.255)\n192.168.0.0/16"
+  - id: priv-002
+    front: "Is 172.32.1.1 private?"
+    back: "No. 172.16.0.0/12 ends at 172.31.255.255."
+  - id: priv-003
+    front: "What is 169.254.0.0/16?"
+    back: "APIPA / link-local IPv4. A host gives itself one when DHCP fails."
+  - id: priv-004
+    front: "What is 127.0.0.0/8?"
+    back: "Loopback. 127.0.0.1 tests the local TCP/IP stack."
+  - id: priv-005
+    front: "Why do private addresses need NAT to reach the internet?"
+    back: "Private ranges are not routed on the public internet, so a router translates them to a public address (NAT/PAT)."
+  - id: priv-006
+    front: "What is 100.64.0.0/10?"
+    back: "Shared address space for carrier-grade NAT (RFC 6598). Not RFC 1918, but not public either."
+  - id: cli-001
+    blueprint: "1.10"
+    front: "Command to see IP settings on Windows? On Linux and macOS?"
+    back: "Windows: ipconfig /all\nLinux: ip addr (and ip route)\nmacOS: ifconfig (and networksetup / netstat -rn)"
+  - id: cli-002
+    blueprint: "1.10"
+    front: "Four IP settings a client needs to reach other networks?"
+    back: "IP address, subnet mask, default gateway, DNS server."
+  - id: cli-003
+    blueprint: "1.10"
+    front: "A PC can ping hosts in its own subnet but not other subnets. Most likely cause?"
+    back: "Wrong or missing default gateway (or the gateway is in a different subnet than the PC)."

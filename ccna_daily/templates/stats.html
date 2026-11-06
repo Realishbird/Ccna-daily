@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Stats &middot; CCNA Daily{% endblock %}
+{% block content %}
+<section class="hero"><div><p class="eyebrow">Progress</p><h1>Stats</h1></div></section>
+
+<section class="stat-row">
+  <div class="stat"><span>Streak</span><b>{{ streak }}</b></div>
+  <div class="stat"><span>Cards mature</span><b>{{ mature }}</b></div>
+  <div class="stat"><span>Cards learning</span><b>{{ learning }}</b></div>
+  <div class="stat"><span>Not seen yet</span><b>{{ total_cards - mature - learning }}</b></div>
+</section>
+
+<section class="panel">
+  <h2>Calendar</h2>
+  <div class="cal-head">{% for d in ['M','T','W','T','F','S','S'] %}<span>{{ d }}</span>{% endfor %}</div>
+  <div class="cal">
+    {% for c in cal %}
+    <span class="{{ c.status }}" title="{{ c.d.isoformat() }}: {{ c.status }}">{{ c.d.day }}</span>
+    {% endfor %}
+  </div>
+  <div class="legend"><span class="done"></span>done <span class="missed"></span>missed <span class="today"></span>today</div>
+</section>
+
+<section class="panel">
+  <h2>Questions by exam domain</h2>
+  {% for d in domains %}
+  <div class="dom">
+    <div class="dom-label"><span>{{ d.n }}. {{ d.name }}</span><span class="muted">{{ d.weight }}% of exam</span></div>
+    <div class="bar {{ 'good' if d.acc and d.acc >= 85 else ('mid' if d.acc and d.acc >= 70 else 'low') }}"><i style="width: {{ d.acc or 0 }}%"></i></div>
+    <div class="muted small">{% if d.total %}{{ d.acc }}% right of {{ d.total }}{% else %}not started{% endif %}</div>
+  </div>
+  {% endfor %}
+  <p class="muted small">Exam-ready target: 85% or more in every domain.</p>
+</section>
+
+<section class="panel">
+  <h2>Subnetting drill</h2>
+  {% if drill %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>Day</th><th>Done</th><th>Right</th><th>Avg time</th></tr></thead>
+    <tbody>
+    {% for r in drill %}
+    <tr><td>{{ r.day }}</td><td>{{ r.n }}</td><td>{{ (100 * r.r / r.n)|round|int }}%</td><td>{{ '%.1f' % r.t if r.t else '-' }}s</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <h3>By problem type (weakest first)</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Type</th><th>Done</th><th>Right</th><th>Avg time</th></tr></thead>
+    <tbody>
+    {% for r in kinds %}
+    <tr><td>{{ kind_names.get(r.kind, r.kind) }}</td><td>{{ r.n }}</td><td>{{ (100 * r.r / r.n)|round|int }}%</td><td>{{ '%.1f' % r.t if r.t else '-' }}s</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}<p class="muted">No drills yet.</p>{% endif %}
+</section>
+
+{% if checkins %}
+<section class="panel">
+  <h2>Check-ins</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Day</th><th>Sleep</th><th>Moved</th><th>Water</th></tr></thead>
+    <tbody>
+    {% for c in checkins %}
+    <tr><td>{{ c.day }}</td><td>{{ c.sleep }}h</td><td>{{ '&#10003;'|safe if c.exercise else '-' }}</td><td>{{ '&#10003;'|safe if c.water else '-' }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{% endif %}
+{% endblock %}

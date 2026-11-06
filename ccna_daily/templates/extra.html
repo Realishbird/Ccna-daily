@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Extra practice &middot; CCNA Daily{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">Today's minimum is done</p>
+    <h1>Extra practice</h1>
+    <p class="muted">Go further or study ahead. Extra work feeds your stats and review schedule, but tomorrow's session is still required.</p>
+  </div>
+</section>
+
+<section class="quick">
+  <a class="tile" href="/drill"><b>Subnetting drill</b><span>Unlimited, timed</span></a>
+  <a class="tile" href="/questions"><b>Mixed questions</b><span>Weighted to your weak spots</span></a>
+  <a class="tile" href="/lab?any=1"><b>Another lab</b><span>Troubleshooting scenario</span></a>
+  <a class="tile" href="/cards?extra=1"><b>More new cards</b><span>Next topics in the plan</span></a>
+</section>
+
+<section class="panel">
+  <h2>Study a topic</h2>
+  <p class="muted small">Topics after today in the plan count as studying ahead.</p>
+  <div class="topic-list">
+    {% for t in topics %}
+    <div class="topic-row">
+      <div class="topic-main">
+        <div class="topic-name">{{ t.topic }}{% if t.weak %} <span class="chip warnchip">focus</span>{% endif %}</div>
+        <div class="muted small">
+          Domain {{ t.domain }}{% if t.first %} &middot; planned {{ t.first.strftime('%b %-d') }}{% if t.first > today %} (ahead){% endif %}{% endif %}
+          &middot; cards {{ t.learned }}/{{ t.cards }}{% if t.acc is not none %} &middot; {{ t.acc }}% right{% endif %}
+        </div>
+        <div class="bar thin"><i style="width: {{ (100 * t.learned / t.cards)|round|int if t.cards else 0 }}%"></i></div>
+      </div>
+      <div class="topic-actions">
+        {% if t.cards %}<a class="btn sm" href="/cards?extra=1&topic={{ t.topic|urlencode }}">Cards</a>{% endif %}
+        {% if t.questions %}<a class="btn sm" href="/questions?topic={{ t.topic|urlencode }}">Questions</a>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

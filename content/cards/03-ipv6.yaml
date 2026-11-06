@@ -1,0 +1,89 @@
+topic: ipv6
+domain: 1
+blueprint: "1.8"
+cards:
+  - id: v6-001
+    front: "How long is an IPv6 address and how is it written?"
+    back: "128 bits, written as 8 groups (hextets) of 4 hex digits separated by colons."
+  - id: v6-002
+    front: "Two rules for shortening an IPv6 address?"
+    back: "1. Drop leading zeros in each group (0db8 -> db8).\n2. Replace ONE run of consecutive all-zero groups with :: (only once per address; use it on the longest run)."
+  - id: v6-003
+    front: "Shorten 2001:0db8:0000:0000:0000:ff00:0042:8329"
+    back: "2001:db8::ff00:42:8329"
+  - id: v6-004
+    front: "Why can :: only appear once?"
+    back: "With two, you could not tell how many zero groups each one stands for."
+  - id: v6-005
+    front: "Expand 2001:db8:a::1 to full form."
+    back: "2001:0db8:000a:0000:0000:0000:0000:0001"
+  - id: v6-006
+    front: "Typical IPv6 prefix sizes: ISP to site, and per LAN?"
+    back: "A site often gets a /48 (or /56); each LAN subnet is a /64."
+  - id: v6-007
+    front: "How many /64 subnets in a /48? In a /56?"
+    back: "/48: 2^16 = 65,536\n/56: 2^8 = 256"
+  - id: v6-008
+    front: "Configure a static IPv6 address on a Cisco interface."
+    back: "ipv6 unicast-routing   (global, to route IPv6)\ninterface g0/0\n ipv6 address 2001:db8:1:1::1/64"
+  - id: v6-009
+    front: "Command to give an interface an IPv6 address using EUI-64?"
+    back: "ipv6 address 2001:db8:1:1::/64 eui-64"
+  - id: v6-010
+    front: "What does 'ipv6 unicast-routing' do?"
+    back: "Enables the router to forward IPv6 packets and send Router Advertisements. Without it the router acts like an IPv6 host."
+  - id: v6-011
+    front: "Command to see IPv6 interface addresses briefly?"
+    back: "show ipv6 interface brief"
+  - id: v6t-001
+    blueprint: "1.9"
+    front: "Global unicast address range?"
+    back: "2000::/3 (starts with 2 or 3). Publicly routable, like public IPv4."
+  - id: v6t-002
+    blueprint: "1.9"
+    front: "Unique local address range?"
+    back: "FC00::/7 (in practice FD00::/8). Private, not routed on the internet, like RFC 1918."
+  - id: v6t-003
+    blueprint: "1.9"
+    front: "Link-local address range and purpose?"
+    back: "FE80::/10. Auto-created on every IPv6 interface, valid only on that link. Used for neighbor discovery and as the next hop in routing protocols."
+  - id: v6t-004
+    blueprint: "1.9"
+    front: "Multicast range? Name FF02::1 and FF02::2."
+    back: "FF00::/8.\nFF02::1 = all nodes on the link\nFF02::2 = all routers on the link"
+  - id: v6t-005
+    blueprint: "1.9"
+    front: "Which IPv6 multicast addresses do OSPFv3 routers use?"
+    back: "FF02::5 (all OSPF routers) and FF02::6 (all DR/BDR routers)."
+  - id: v6t-006
+    blueprint: "1.9"
+    front: "What is an anycast address?"
+    back: "One address assigned to several devices; packets go to the nearest one by routing. Configured like unicast with the 'anycast' keyword."
+  - id: v6t-007
+    blueprint: "1.9"
+    front: "Does IPv6 have broadcast?"
+    back: "No. IPv6 uses multicast instead (e.g. FF02::1 for all nodes)."
+  - id: v6t-008
+    blueprint: "1.9"
+    front: "Modified EUI-64: 3 steps from MAC to interface ID?"
+    back: "1. Split the 48-bit MAC in half.\n2. Insert FFFE in the middle (64 bits).\n3. Flip the 7th bit (U/L bit) of the first byte."
+  - id: v6t-009
+    blueprint: "1.9"
+    front: "EUI-64 interface ID for MAC 00:1A:2B:3C:4D:5E?"
+    back: "021A:2BFF:FE3C:4D5E\n(00 -> 02 after flipping the 7th bit)"
+  - id: v6t-010
+    blueprint: "1.9"
+    front: "IPv6 loopback and unspecified addresses?"
+    back: "Loopback ::1/128\nUnspecified ::/128 (all zeros, used before an address is known)"
+  - id: v6t-011
+    blueprint: "1.9"
+    front: "What is the solicited-node multicast address used for?"
+    back: "FF02::1:FFxx:xxxx (last 24 bits of the unicast address). Used by NDP neighbor solicitation, replacing ARP broadcasts."
+  - id: v6t-012
+    blueprint: "1.9"
+    front: "SLAAC in one sentence?"
+    back: "Stateless Address Autoconfiguration: the host learns the /64 prefix from a Router Advertisement and builds its own interface ID (EUI-64 or random)."
+  - id: v6t-013
+    blueprint: "1.9"
+    front: "NDP message types replacing ARP and router discovery?"
+    back: "NS/NA (Neighbor Solicitation/Advertisement) replace ARP.\nRS/RA (Router Solicitation/Advertisement) find routers and prefixes."

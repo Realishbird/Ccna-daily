@@ -1,0 +1,60 @@
+topic: routing
+domain: 3
+blueprint: "3.2"
+questions:
+  - id: q-rt-001
+    q: "Refer to the routing table. Which path does the router use to forward a packet to 10.10.10.70?"
+    exhibit: |-
+      Gateway of last resort is 203.0.113.1 to network 0.0.0.0
+
+      S*    0.0.0.0/0 [1/0] via 203.0.113.1
+            10.0.0.0/8 is variably subnetted, 4 subnets, 4 masks
+      O        10.10.0.0/16 [110/3] via 10.1.1.2, 00:12:01, GigabitEthernet0/0
+      D        10.10.10.0/24 [90/30720] via 10.1.2.2, 00:05:44, GigabitEthernet0/1
+      O        10.10.10.64/26 [110/2] via 10.1.3.2, 00:01:10, GigabitEthernet0/2
+      S        10.10.10.64/27 [1/0] via 10.1.4.2
+    options: ["GigabitEthernet0/0", "GigabitEthernet0/1", "GigabitEthernet0/2", "Toward 10.1.4.2"]
+    answer: 3
+    explain: "Longest prefix match: 10.10.10.64/27 covers .64-.95, which includes .70, and /27 is longer than /26, /24, /16 or /0. The static route wins on prefix length alone; AD and metric are never compared."
+  - id: q-rt-002
+    q: "A router learns 172.16.0.0/16 from OSPF and 172.16.0.0/16 from EIGRP. Which is installed?"
+    options: ["OSPF, lower metric", "EIGRP, lower administrative distance", "Both, load-balanced", "Neither, they conflict"]
+    answer: 1
+    explain: "Same prefix, so administrative distance decides: EIGRP 90 beats OSPF 110."
+  - id: q-rt-003
+    q: "What does the value 110 represent in: O 192.168.4.0/24 [110/65] via 10.0.0.2?"
+    blueprint: "3.1"
+    options: ["Metric", "Administrative distance", "Hop count", "Route age"]
+    answer: 1
+    explain: "[AD/metric]. 110 is OSPF's administrative distance; 65 is the OSPF cost."
+  - id: q-rt-004
+    q: "Which route does the router use for a packet to 192.168.1.130?"
+    exhibit: |-
+      S     192.168.1.0/24 [1/0] via 10.0.0.1
+      O     192.168.1.128/25 [110/20] via 10.0.0.5
+      D     192.168.1.128/26 [90/2816] via 10.0.0.9
+    options: ["via 10.0.0.1", "via 10.0.0.5", "via 10.0.0.9", "It load-balances across all three"]
+    answer: 2
+    explain: "Longest prefix match first: 192.168.1.128/26 covers .128-.191, which includes .130. AD is not used because the prefixes differ."
+  - id: q-rt-005
+    q: "Which code in 'show ip route' identifies the /32 route for a router's own interface address?"
+    blueprint: "3.1"
+    options: ["C", "L", "S", "H"]
+    answer: 1
+    explain: "L (local) is the /32 host route for the interface's own IP. C is the connected subnet."
+  - id: q-rt-006
+    q: "After longest prefix match, what does a router compare, and in what order?"
+    options: ["Administrative distance, then metric", "Metric, then administrative distance", "Router ID, then metric", "Interface bandwidth, then hop count", "Route age, then AD"]
+    answer: 0
+    explain: "Longest prefix first, then lowest administrative distance (between sources), then lowest metric (within one protocol)."
+  - id: q-rt-007
+    q: "What is the gateway of last resort?"
+    blueprint: "3.1"
+    options: ["The router's own loopback", "The next hop of the default route", "The DR in OSPF", "The first static route configured"]
+    answer: 1
+    explain: "It is the next hop of the default route (0.0.0.0/0), used when nothing more specific matches."
+  - id: q-rt-008
+    q: "All links between R1 and R2 are 1 Gbps or 10 Gbps, yet OSPF picks a slower-looking path. What should be changed?"
+    options: ["Increase the hello timer", "Set auto-cost reference-bandwidth higher on all routers", "Change the router ID", "Lower the administrative distance"]
+    answer: 1
+    explain: "With the default 100 Mbps reference, 1G and 10G links both cost 1. Raise the reference bandwidth (e.g. 10000) on every router so faster links get lower cost."

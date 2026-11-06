@@ -1,0 +1,88 @@
+topic: ospf
+domain: 3
+blueprint: "3.4"
+cards:
+  - id: ospf-001
+    front: "OSPF basics: type, AD, metric, algorithm, protocol number?"
+    back: "Link-state IGP, AD 110, metric = cost, SPF (Dijkstra), IP protocol 89."
+  - id: ospf-002
+    front: "OSPF multicast addresses (IPv4)?"
+    back: "224.0.0.5 all OSPF routers\n224.0.0.6 DR/BDR"
+  - id: ospf-003
+    front: "OSPF neighbor states in order?"
+    back: "Down -> Init -> 2-Way -> ExStart -> Exchange -> Loading -> Full"
+  - id: ospf-004
+    front: "What must match for two OSPF routers to become neighbors?"
+    back: "Area ID, subnet and mask, hello and dead timers, authentication, stub area flag, and a compatible MTU (MTU mismatch stalls at ExStart/Exchange).\nRouter IDs must be UNIQUE."
+  - id: ospf-005
+    front: "Default hello/dead timers on broadcast and point-to-point networks?"
+    back: "Hello 10 s, dead 40 s."
+  - id: ospf-006
+    front: "How is the OSPF router ID chosen?"
+    back: "1. 'router-id' command.\n2. Highest IPv4 address on an up loopback.\n3. Highest IPv4 address on an up physical interface.\nChanges need 'clear ip ospf process'."
+  - id: ospf-007
+    front: "Enable OSPF on interfaces: two ways?"
+    back: "router ospf 1\n network 10.1.1.0 0.0.0.255 area 0\n\nor on the interface:\ninterface g0/0\n ip ospf 1 area 0"
+  - id: ospf-008
+    front: "What does 'passive-interface g0/1' do in OSPF?"
+    back: "Stops sending hellos on that interface (no neighbors form) but still advertises its network. Use on LAN ports with only end hosts."
+  - id: ospf-009
+    front: "How do you advertise a default route into OSPF?"
+    back: "default-information originate (the router needs a default route itself, or add 'always')."
+  - id: ospf-010
+    front: "OSPF cost formula and examples with default reference bandwidth?"
+    back: "Cost = 100 Mbps / interface bandwidth (minimum 1).\n10 Mbps = 10, 100 Mbps = 1, 1 Gbps = 1."
+  - id: ospf-011
+    front: "Set OSPF cost directly on an interface?"
+    back: "ip ospf cost 50"
+  - id: ospf-012
+    blueprint: "3.4.c"
+    front: "Why does OSPF elect a DR and BDR on broadcast networks?"
+    back: "To cut the number of adjacencies: all routers go Full only with the DR and BDR; DROTHERs stay 2-Way with each other."
+  - id: ospf-013
+    blueprint: "3.4.c"
+    front: "DR election rules?"
+    back: "1. Highest interface priority (default 1; 0 = never DR/BDR).\n2. Tie: highest router ID.\nNot preemptive: a better router joining later does not take over until the DR fails or OSPF is reset."
+  - id: ospf-014
+    blueprint: "3.4.c"
+    front: "Command to make a router never become DR?"
+    back: "interface g0/0\n ip ospf priority 0"
+  - id: ospf-015
+    blueprint: "3.4.b"
+    front: "Point-to-point network type: DR/BDR?"
+    back: "No DR/BDR election. Default on serial links; set on Ethernet links between two routers with 'ip ospf network point-to-point' to speed up adjacency."
+  - id: ospf-016
+    front: "Key OSPF verification commands?"
+    back: "show ip ospf neighbor\nshow ip ospf interface (brief)\nshow ip protocols\nshow ip route ospf\nshow ip ospf database"
+  - id: ospf-017
+    front: "Neighbors stuck in 2-Way between two DROTHERs. Problem?"
+    back: "No problem. DROTHERs only go Full with the DR and BDR."
+  - id: ospf-018
+    front: "What is area 0 and why does it matter?"
+    back: "The backbone area. In multi-area OSPF every area must connect to area 0. CCNA covers single-area OSPF (usually all in area 0)."
+  - id: ospf-019
+    front: "LSA types 1 and 2 (single area)?"
+    back: "Type 1 Router LSA: each router's links.\nType 2 Network LSA: created by the DR for a multi-access segment."
+  - id: ospf-020
+    front: "Does OSPF wildcard in the network command need to match the interface mask exactly?"
+    back: "No. It only selects which interfaces run OSPF (the interface's own mask is advertised). 'network 0.0.0.0 255.255.255.255 area 0' enables all interfaces."
+  - id: fhrp-001
+    topic: fhrp
+    blueprint: "3.5"
+    front: "Purpose of a first hop redundancy protocol?"
+    back: "Give hosts one virtual default gateway IP (and MAC) shared by two or more routers, so the gateway survives a router failure."
+  - id: fhrp-002
+    topic: fhrp
+    blueprint: "3.5"
+    front: "HSRP vs VRRP vs GLBP?"
+    back: "HSRP: Cisco, active/standby.\nVRRP: open standard, master/backup.\nGLBP: Cisco, load-balances across several gateways with one virtual IP."
+  - id: fhrp-003
+    topic: fhrp
+    blueprint: "3.5"
+    front: "HSRP: default priority, preemption, virtual MAC (v1)?"
+    back: "Priority 100 (highest wins, then highest IP).\nPreempt is OFF by default.\nVirtual MAC 0000.0c07.acXX (XX = group number in hex)."
+  - id: fhrp-004
+    topic: fhrp
+    blueprint: "3.5"
+    front: "HSRP hello and hold timers?"
+    back: "Hello 3 s, hold 10 s."
