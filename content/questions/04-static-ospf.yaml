@@ -1,0 +1,98 @@
+topic: static-routing
+domain: 3
+blueprint: "3.3"
+questions:
+  - id: q-st-001
+    q: "R1 should use its OSPF-learned route to 10.50.0.0/16 and only fall back to a static route via 192.0.2.2 if OSPF loses the route. Which command?"
+    options: ["ip route 10.50.0.0 255.255.0.0 192.0.2.2", "ip route 10.50.0.0 255.255.0.0 192.0.2.2 100", "ip route 10.50.0.0 255.255.0.0 192.0.2.2 120", "ip route 10.50.0.0 0.0.255.255 192.0.2.2 120"]
+    answer: 2
+    explain: "A floating static needs an AD higher than OSPF's 110, e.g. 120. AD 1 or 100 would override OSPF. The last option uses a wildcard instead of a subnet mask."
+  - id: q-st-002
+    q: "Which command configures an IPv6 default route via next hop 2001:db8:0:12::2?"
+    options: ["ipv6 route 0::/128 2001:db8:0:12::2", "ipv6 route ::/0 2001:db8:0:12::2", "ip route ::/0 2001:db8:0:12::2", "ipv6 default-gateway 2001:db8:0:12::2"]
+    answer: 1
+    explain: "::/0 is the IPv6 default route: ipv6 route ::/0 <next-hop>."
+  - id: q-st-003
+    q: "An engineer configures 'ipv6 route 2001:db8:5::/64 fe80::2' and it is rejected. Why?"
+    options: ["Link-local next hops need the outgoing interface", "IPv6 static routes cannot use link-local addresses", "The prefix must be /48", "ipv6 unicast-routing is enabled"]
+    answer: 0
+    explain: "A link-local next hop is ambiguous without an exit interface: ipv6 route 2001:db8:5::/64 g0/0 fe80::2."
+  - id: q-st-004
+    q: "Which static route is a host route?"
+    options: ["ip route 0.0.0.0 0.0.0.0 10.1.1.1", "ip route 10.9.9.0 255.255.255.0 10.1.1.1", "ip route 10.9.9.9 255.255.255.255 10.1.1.1", "ip route 10.0.0.0 255.0.0.0 null0"]
+    answer: 2
+    explain: "A /32 (255.255.255.255) mask matches one host."
+  - id: q-st-005
+    q: "A static route 'ip route 172.20.0.0 255.255.0.0 10.0.0.2' is configured but missing from the routing table. The router has no route to 10.0.0.2. What is the cause?"
+    options: ["The AD is too high", "The next hop is not reachable, so the route cannot be resolved", "Static routes need 'ip routing static'", "The mask must be written as /16"]
+    answer: 1
+    explain: "The router must have a route to the next hop (recursive lookup). If it cannot reach 10.0.0.2, the static route is not installed."
+  - id: q-ospf-001
+    topic: ospf
+    blueprint: "3.4.a"
+    q: "Two routers on the same segment are not forming an OSPF adjacency. Which mismatch prevents it?"
+    options: ["Process ID (router ospf 1 vs router ospf 2)", "Hello and dead timers", "Interface description", "Router ID being numerically lower on one side"]
+    answer: 1
+    explain: "Hello/dead timers must match. The process ID is locally significant and does NOT need to match."
+  - id: q-ospf-002
+    topic: ospf
+    blueprint: "3.4.d"
+    q: "R1 has no 'router-id' command. Loopback0 is 1.1.1.1, G0/0 is 192.168.1.1, G0/1 is 10.0.0.1. What is the router ID?"
+    options: ["192.168.1.1", "10.0.0.1", "1.1.1.1", "0.0.0.0"]
+    answer: 2
+    explain: "Without the router-id command, the highest IP on an up loopback is used before any physical interface. 1.1.1.1 is the only loopback."
+  - id: q-ospf-003
+    topic: ospf
+    blueprint: "3.4.c"
+    q: "Four routers share an Ethernet segment, all with priority 1. Router IDs: 1.1.1.1, 2.2.2.2, 3.3.3.3, 4.4.4.4. All boot at the same time. Which becomes DR?"
+    options: ["1.1.1.1", "2.2.2.2", "3.3.3.3", "4.4.4.4"]
+    answer: 3
+    explain: "Equal priority, so the highest router ID wins: 4.4.4.4 is DR and 3.3.3.3 is BDR."
+  - id: q-ospf-004
+    topic: ospf
+    blueprint: "3.4.c"
+    q: "Refer to the output. What is the state of the relationship with 3.3.3.3, and is it a problem?"
+    exhibit: |-
+      R1# show ip ospf neighbor
+      Neighbor ID     Pri   State           Dead Time   Address         Interface
+      4.4.4.4           1   FULL/DR         00:00:35    10.0.0.4        Gi0/0
+      2.2.2.2           1   FULL/BDR        00:00:38    10.0.0.2        Gi0/0
+      3.3.3.3           1   2WAY/DROTHER    00:00:31    10.0.0.3        Gi0/0
+    options: ["2-Way; a problem because all neighbors must be Full", "2-Way; normal, since R1 and 3.3.3.3 are both DROTHERs", "Full; normal", "Init; a hello timer mismatch"]
+    answer: 1
+    explain: "DROTHERs stay in 2-Way with each other and go Full only with the DR and BDR. This is expected."
+  - id: q-ospf-005
+    topic: ospf
+    blueprint: "3.4"
+    q: "Which command stops OSPF hellos on G0/2 (a user LAN) but still advertises its subnet?"
+    options: ["no network on G0/2", "passive-interface GigabitEthernet0/2", "ip ospf priority 0", "shutdown"]
+    answer: 1
+    explain: "passive-interface suppresses hellos (no neighbors form there) while still advertising the network."
+  - id: q-ospf-006
+    topic: ospf
+    blueprint: "3.4.b"
+    q: "Two routers are connected back-to-back by Ethernet. Which command removes the DR/BDR election and speeds up adjacency?"
+    options: ["ip ospf network point-to-point", "ip ospf priority 255", "ip ospf network broadcast", "ip ospf cost 1"]
+    answer: 0
+    explain: "Point-to-point network type skips DR/BDR election and the wait timer on a two-router link."
+  - id: q-ospf-007
+    topic: ospf
+    blueprint: "3.4.a"
+    q: "Neighbors are stuck in EXSTART/EXCHANGE. Most likely cause?"
+    options: ["Area ID mismatch", "MTU mismatch", "Duplicate router ID", "Passive interface"]
+    answer: 1
+    explain: "MTU mismatch typically stalls the DBD exchange in ExStart/Exchange. Area or timer mismatches stop neighbors from forming at all."
+  - id: q-fhrp-001
+    topic: fhrp
+    blueprint: "3.5"
+    q: "Which FHRP is an open standard?"
+    options: ["HSRP", "GLBP", "VRRP", "CARP"]
+    answer: 2
+    explain: "VRRP is the IETF standard. HSRP and GLBP are Cisco proprietary. CARP is not on the CCNA."
+  - id: q-fhrp-002
+    topic: fhrp
+    blueprint: "3.5"
+    q: "R1 (HSRP priority 110) failed and R2 became active. R1 is back, but R2 stays active. Why?"
+    options: ["R2 has a higher IP address", "Preemption is not enabled on R1", "HSRP always keeps the current active router", "The virtual MAC changed"]
+    answer: 1
+    explain: "HSRP preemption is off by default. Configure 'standby 1 preempt' on R1 so its higher priority takes over again."

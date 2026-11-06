@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Flash cards &middot; CCNA Daily{% endblock %}
+{% block content %}
+<div class="study-head">
+  <a class="back" href="{{ '/extra' if extra else '/' }}">&larr;</a>
+  <div>
+    <p class="eyebrow">{% if extra %}Extra &middot; {{ topic or 'all topics' }}{% else %}Step 1 &middot; Flash cards{% endif %}</p>
+    <div class="counter"><b>{{ reviewed }}</b> reviewed{% if not extra %} &middot; <b>{{ remaining }}</b> left{% endif %}</div>
+  </div>
+</div>
+
+<article class="flash" id="flash">
+  <div class="flash-tags">
+    <span class="chip">{{ card.topic }}</span>
+    {% if card.blueprint %}<span class="chip ghost">{{ card.blueprint }}</span>{% endif %}
+    {% if is_new %}<span class="chip new">new</span>{% endif %}
+  </div>
+  <div class="flash-front">{{ card.front }}</div>
+  <div class="flash-back" hidden>{{ card.back }}</div>
+</article>
+
+<button class="btn primary wide" id="reveal" type="button">Show answer <kbd>Space</kbd></button>
+
+<form class="rate" id="rate" method="post" action="/cards/{{ card.id }}/rate" hidden>
+  <input type="hidden" name="topic" value="{{ topic }}">
+  <input type="hidden" name="extra" value="{{ extra }}">
+  <button name="rating" value="1" class="r again">Again<kbd>1</kbd></button>
+  <button name="rating" value="2" class="r hard">Hard<kbd>2</kbd></button>
+  <button name="rating" value="3" class="r good">Good<kbd>3</kbd></button>
+  <button name="rating" value="4" class="r easy">Easy<kbd>4</kbd></button>
+</form>
+{% endblock %}

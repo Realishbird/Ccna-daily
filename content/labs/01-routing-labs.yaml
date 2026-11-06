@@ -1,0 +1,252 @@
+labs:
+  - id: lab-sub-gw
+    title: "PC can't leave its subnet"
+    topic: subnetting
+    domain: 1
+    blueprint: "1.6, 1.10"
+    scenario: |-
+      PC1 can ping other PCs on its LAN but cannot reach the server at 10.20.0.10.
+      Other PCs on the same switch reach the server fine.
+    topology: |-
+      PC1 ---- SW1 ---- R1 (G0/0) ======= R1 (G0/1) ---- Server 10.20.0.10
+                        192.168.10.1/26
+    outputs:
+      - device: PC1
+        cmd: "ipconfig"
+        text: |-
+          Ethernet adapter Ethernet0:
+             IPv4 Address. . . . . . . . . . . : 192.168.10.70
+             Subnet Mask . . . . . . . . . . . : 255.255.255.192
+             Default Gateway . . . . . . . . . : 192.168.10.1
+      - device: R1
+        cmd: "show ip interface brief"
+        text: |-
+          Interface              IP-Address      OK? Method Status                Protocol
+          GigabitEthernet0/0     192.168.10.1    YES manual up                    up
+          GigabitEthernet0/1     10.20.0.1       YES manual up                    up
+      - device: R1
+        cmd: "show running-config interface g0/0"
+        text: |-
+          interface GigabitEthernet0/0
+           ip address 192.168.10.1 255.255.255.192
+    question: "What is the root cause?"
+    options:
+      - "PC1's IP address is in a different subnet than its default gateway"
+      - "R1 has no route to 10.20.0.0"
+      - "The subnet mask on R1 G0/0 is wrong"
+      - "The server has no default gateway"
+    answer: 0
+    explain: |-
+      192.168.10.1/26 sits in 192.168.10.0/26 (.1 - .62). PC1 at .70 is in 192.168.10.64/26, a different subnet, so PC1 cannot reach its gateway.
+      It can still talk to hosts in .64/26 on the same switch, which is why some local pings work.
+      Fix: give PC1 an address from .2 - .62 (or move the gateway).
+
+  - id: lab-static-return
+    title: "One-way static routing"
+    topic: static-routing
+    domain: 3
+    blueprint: "3.3"
+    scenario: |-
+      Hosts on LAN A (10.1.1.0/24) cannot ping hosts on LAN B (10.2.2.0/24).
+      The routers are connected by 172.16.0.0/30. R1 is .1, R2 is .2.
+    topology: |-
+      LAN A 10.1.1.0/24 ---- R1 ==== 172.16.0.0/30 ==== R2 ---- LAN B 10.2.2.0/24
+    outputs:
+      - device: R1
+        cmd: "show ip route"
+        text: |-
+          Gateway of last resort is not set
+
+                10.0.0.0/8 is variably subnetted, 3 subnets, 2 masks
+          C        10.1.1.0/24 is directly connected, GigabitEthernet0/0
+          L        10.1.1.1/32 is directly connected, GigabitEthernet0/0
+          S        10.2.2.0/24 [1/0] via 172.16.0.2
+                172.16.0.0/16 is variably subnetted, 2 subnets, 2 masks
+          C        172.16.0.0/30 is directly connected, GigabitEthernet0/1
+          L        172.16.0.1/32 is directly connected, GigabitEthernet0/1
+      - device: R2
+        cmd: "show ip route"
+        text: |-
+          Gateway of last resort is not set
+
+                10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+          C        10.2.2.0/24 is directly connected, GigabitEthernet0/0
+          L        10.2.2.1/32 is directly connected, GigabitEthernet0/0
+                172.16.0.0/16 is variably subnetted, 2 subnets, 2 masks
+          C        172.16.0.0/30 is directly connected, GigabitEthernet0/1
+          L        172.16.0.2/32 is directly connected, GigabitEthernet0/1
+      - device: R1
+        cmd: "ping 172.16.0.2"
+        text: |-
+          !!!!!
+          Success rate is 100 percent (5/5)
+    question: "Why does the ping from LAN A to LAN B fail?"
+    options:
+      - "R1's static route has the wrong next hop"
+      - "R2 has no route back to 10.1.1.0/24"
+      - "The /30 link has no usable addresses"
+      - "Static routes need an AD of 0 to work"
+    answer: 1
+    explain: |-
+      Echo requests reach LAN B, but R2 has no route to 10.1.1.0/24, so the replies are dropped. Routing must work in both directions.
+      Fix on R2: ip route 10.1.1.0 255.255.255.0 172.16.0.1
+
+  - id: lab-ospf-timers
+    title: "OSPF neighbor never appears"
+    topic: ospf
+    domain: 3
+    blueprint: "3.4.a"
+    scenario: |-
+      R1 and R2 are directly connected on 10.0.12.0/30 and both run OSPF in area 0.
+      R1 shows no OSPF neighbors, and no OSPF routes are learned.
+    outputs:
+      - device: R1
+        cmd: "show ip ospf interface g0/1"
+        text: |-
+          GigabitEthernet0/1 is up, line protocol is up
+            Internet Address 10.0.12.1/30, Area 0, Attached via Network Statement
+            Process ID 1, Router ID 1.1.1.1, Network Type BROADCAST, Cost: 1
+            Transmit Delay is 1 sec, State DR, Priority 1
+            Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5
+            Neighbor Count is 0, Adjacent neighbor count is 0
+      - device: R2
+        cmd: "show ip ospf interface g0/1"
+        text: |-
+          GigabitEthernet0/1 is up, line protocol is up
+            Internet Address 10.0.12.2/30, Area 0, Attached via Network Statement
+            Process ID 20, Router ID 2.2.2.2, Network Type BROADCAST, Cost: 1
+            Transmit Delay is 1 sec, State DR, Priority 1
+            Timer intervals configured, Hello 5, Dead 20, Wait 20, Retransmit 5
+            Neighbor Count is 0, Adjacent neighbor count is 0
+      - device: R2
+        cmd: "ping 10.0.12.1"
+        text: |-
+          !!!!!
+          Success rate is 100 percent (5/5)
+    question: "What prevents the adjacency?"
+    options:
+      - "Different OSPF process IDs (1 and 20)"
+      - "Hello and dead timers do not match"
+      - "Both routers are DR"
+      - "The /30 mask is not allowed in OSPF"
+    answer: 1
+    explain: |-
+      Hello/dead must match (10/40 vs 5/20). Process IDs are local and do not need to match. Both show DR only because each thinks it is alone on the segment.
+      Fix on R2 g0/1: ip ospf hello-interval 10 and ip ospf dead-interval 40 (or 'no' both).
+
+  - id: lab-ospf-area
+    title: "OSPF adjacency with an area mismatch"
+    topic: ospf
+    domain: 3
+    blueprint: "3.4.a"
+    scenario: |-
+      After a change window, R3 lost its OSPF neighbor R4. The link pings fine.
+      The log on R3 shows repeated messages.
+    outputs:
+      - device: R3
+        cmd: "show logging | include OSPF"
+        text: |-
+          %OSPF-4-ERRRCV: Received invalid packet: mismatched area ID from backbone area
+            from 10.0.34.4, GigabitEthernet0/2
+      - device: R3
+        cmd: "show running-config | section router ospf"
+        text: |-
+          router ospf 1
+           router-id 3.3.3.3
+           network 10.0.34.0 0.0.0.3 area 1
+           network 192.168.3.0 0.0.0.255 area 0
+      - device: R4
+        cmd: "show running-config | section router ospf"
+        text: |-
+          router ospf 1
+           router-id 4.4.4.4
+           network 10.0.34.0 0.0.0.3 area 0
+    question: "What is the fix?"
+    options:
+      - "Change the wildcard on R4 to 0.0.0.255"
+      - "Put 10.0.34.0/30 in the same area on both routers (area 0 on R3)"
+      - "Change R3's router ID"
+      - "Make G0/2 passive on R3"
+    answer: 1
+    explain: |-
+      Both ends of a link must be in the same area. R3 has the link in area 1, R4 in area 0.
+      Fix on R3: no network 10.0.34.0 0.0.0.3 area 1, then network 10.0.34.0 0.0.0.3 area 0.
+
+  - id: lab-floating-static
+    title: "Backup link is carrying all the traffic"
+    topic: routing
+    domain: 3
+    blueprint: "3.2, 3.3.d"
+    scenario: |-
+      R1 reaches the HQ network 10.100.0.0/16 over a primary fiber link (OSPF) and a backup LTE link (static route).
+      Users complain about slow speeds. The fiber link is up and OSPF neighbors are Full.
+    outputs:
+      - device: R1
+        cmd: "show ip route 10.100.0.0"
+        text: |-
+          Routing entry for 10.100.0.0/16
+            Known via "static", distance 100, metric 0
+            Routing Descriptor Blocks:
+            * 100.64.7.1
+                Route metric is 0, traffic share count is 1
+      - device: R1
+        cmd: "show running-config | include ip route"
+        text: |-
+          ip route 10.100.0.0 255.255.0.0 100.64.7.1 100
+      - device: R1
+        cmd: "show ip ospf neighbor"
+        text: |-
+          Neighbor ID     Pri   State           Dead Time   Address         Interface
+          10.100.0.1        0   FULL/  -        00:00:33    10.255.0.2      Gi0/0
+    question: "Why does traffic use the LTE backup?"
+    options:
+      - "OSPF neighbor is not Full"
+      - "The static route's AD of 100 is lower than OSPF's 110, so it wins"
+      - "The static route has a longer prefix"
+      - "OSPF cost is too high on the fiber link"
+    answer: 1
+    explain: |-
+      Same prefix (/16) from both sources, so AD decides. 100 < 110, so the static route beats OSPF.
+      Fix: make it a true floating static with AD above 110, e.g. ip route 10.100.0.0 255.255.0.0 100.64.7.1 120.
+
+  - id: lab-ipv6-routing
+    title: "IPv6 hosts get no address"
+    topic: ipv6
+    domain: 1
+    blueprint: "1.8, 1.9"
+    scenario: |-
+      PCs on R1's G0/0 LAN are set to get IPv6 addresses with SLAAC, but they only have FE80:: addresses.
+      R1's interface has a global address configured.
+    outputs:
+      - device: R1
+        cmd: "show ipv6 interface brief"
+        text: |-
+          GigabitEthernet0/0     [up/up]
+              FE80::1
+              2001:DB8:ACAD:10::1
+          GigabitEthernet0/1     [up/up]
+              FE80::1
+              2001:DB8:FFFF:1::1
+      - device: R1
+        cmd: "show running-config | include ipv6"
+        text: |-
+          ipv6 address FE80::1 link-local
+          ipv6 address 2001:DB8:ACAD:10::1/64
+          ipv6 address FE80::1 link-local
+          ipv6 address 2001:DB8:FFFF:1::1/64
+      - device: PC1
+        cmd: "ipconfig"
+        text: |-
+          Link-local IPv6 Address . . . . . : fe80::9c1:44ff:fe2a:51b0%12
+          IPv4 Address. . . . . . . . . . . : 192.168.10.23
+          Default Gateway . . . . . . . . . : 192.168.10.1
+    question: "What is missing on R1?"
+    options:
+      - "ipv6 enable on G0/0"
+      - "ipv6 unicast-routing"
+      - "A DHCPv6 pool"
+      - "A unique link-local address on each interface"
+    answer: 1
+    explain: |-
+      Without 'ipv6 unicast-routing', R1 acts as an IPv6 host: it does not send Router Advertisements, so SLAAC clients never learn the 2001:db8:acad:10::/64 prefix.
+      Reusing FE80::1 on different interfaces is fine because link-local addresses only need to be unique per link.

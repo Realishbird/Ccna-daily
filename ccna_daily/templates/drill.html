@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Subnetting drill &middot; CCNA Daily{% endblock %}
+{% block content %}
+<div class="study-head">
+  <a class="back" href="/">&larr;</a>
+  <div>
+    <p class="eyebrow">{% if day_complete %}Extra &middot; {% else %}Step 2 &middot; {% endif %}Subnetting drill</p>
+    <div class="counter"><b>{{ stats.n }}</b>{% if not day_complete %} / {{ need }}{% endif %} answered &middot; <b>{{ stats.acc }}%</b> right</div>
+  </div>
+  <div class="timer" id="timer" data-start="{{ problem.issued_at }}">0.0s</div>
+</div>
+
+{% if prev %}
+<div class="result {{ 'ok' if prev.correct else 'bad' }}">
+  <b>{{ 'Correct' if prev.correct else 'Not quite' }}</b> in {{ '%.1f' % prev.seconds }}s
+  <div class="small">{{ prev.prompt }}<br>
+    {% if not prev.correct %}You said <code>{{ prev.given }}</code> &middot; {% endif %}Answer <code>{{ prev.answer }}</code></div>
+</div>
+{% endif %}
+
+<form class="panel drill" method="post" action="/drill/{{ problem.id }}" autocomplete="off">
+  <p class="drill-prompt">{{ problem.prompt }}</p>
+  <input class="drill-input" name="given" autofocus autocapitalize="off" autocorrect="off" spellcheck="false"
+         inputmode="{{ 'numeric' if problem.kind in ('hosts','subnet_count') else 'text' }}"
+         placeholder="{{ hint or 'Your answer' }}">
+  <button class="btn primary wide">Check <kbd>Enter</kbd></button>
+</form>
+
+<div class="stat-row">
+  <div class="stat"><span>Avg time (correct)</span><b>{{ '%.1f' % stats.avg if stats.avg else '-' }}s</b></div>
+  <div class="stat"><span>Best run today</span><b>{{ stats.best_run }}</b></div>
+  <div class="stat"><span>Best day avg</span><b>{{ '%.1f' % stats.best_avg if stats.best_avg else '-' }}s</b></div>
+</div>
+<p class="muted small center">Target: under 30 seconds per problem with no mistakes.
+{% if not day_complete and stats.n >= need %}<a href="/questions">Done with the minimum, go to questions &rarr;</a>{% endif %}</p>
+{% endblock %}

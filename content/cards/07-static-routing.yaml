@@ -1,0 +1,40 @@
+topic: static-routing
+domain: 3
+blueprint: "3.3"
+cards:
+  - id: st-001
+    front: "IPv4 static route syntax (next hop and exit interface forms)?"
+    back: "ip route 10.2.0.0 255.255.0.0 192.168.1.2\nip route 10.2.0.0 255.255.0.0 g0/1\nip route 10.2.0.0 255.255.0.0 g0/1 192.168.1.2  (fully specified)"
+  - id: st-002
+    front: "IPv4 default static route?"
+    back: "ip route 0.0.0.0 0.0.0.0 <next-hop or exit interface>\nShows as S* in the routing table."
+  - id: st-003
+    front: "IPv4 host route to 10.5.5.5?"
+    back: "ip route 10.5.5.5 255.255.255.255 192.168.1.2"
+  - id: st-004
+    front: "What is a floating static route?"
+    back: "A backup static route with a higher administrative distance than the primary route, so it is only installed when the primary disappears.\nip route 0.0.0.0 0.0.0.0 203.0.113.1 5"
+  - id: st-005
+    front: "OSPF is the primary path to 10.9.0.0/16. What AD should the floating static backup use?"
+    back: "Higher than 110, e.g. 111 or more:\nip route 10.9.0.0 255.255.0.0 10.0.0.2 115"
+  - id: st-006
+    front: "IPv6 static route syntax?"
+    back: "ipv6 route 2001:db8:2::/64 2001:db8:12::2\nipv6 route 2001:db8:2::/64 g0/1 fe80::2  (link-local next hop needs the exit interface)"
+  - id: st-007
+    front: "IPv6 default static route?"
+    back: "ipv6 route ::/0 2001:db8:12::2"
+  - id: st-008
+    front: "Why must a link-local IPv6 next hop include the exit interface?"
+    back: "Every interface has its own FE80:: link-local addresses, so the router cannot tell which link the next hop is on."
+  - id: st-009
+    front: "A static route with a next hop does not appear in the routing table. Two common causes?"
+    back: "1. No route to the next-hop address (recursive lookup fails), e.g. the exit interface is down.\n2. Typo in the mask or next hop.\nAlso: a route with a lower AD for the same prefix exists."
+  - id: st-010
+    front: "Static route pointing only to an Ethernet exit interface: what is the risk?"
+    back: "The router treats every destination as directly connected and ARPs for each one, relying on proxy ARP. Prefer a next hop (or both) on Ethernet."
+  - id: st-011
+    front: "Command to see only static routes?"
+    back: "show ip route static  (IPv6: show ipv6 route static)"
+  - id: st-012
+    front: "What is a network route vs a host route vs a default route?"
+    back: "Network route: a subnet (e.g. /24).\nHost route: one address (/32 or /128).\nDefault route: matches everything (0.0.0.0/0 or ::/0)."

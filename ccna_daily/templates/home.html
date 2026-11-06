@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">{{ today.strftime('%A, %b %-d') }}{% if days_left is not none and days_left >= 0 %} &middot; {{ days_left }} day{{ '' if days_left == 1 else 's' }} to go{% endif %}</p>
+    <h1>{% if sched %}{{ sched.title }}{% else %}Daily review{% endif %}</h1>
+    {% if sched and sched.topics %}
+    <div class="chips">{% for t in sched.topics %}<span class="chip">{{ t }}</span>{% endfor %}</div>
+    {% endif %}
+  </div>
+  <ol class="week" aria-label="Last 7 days">
+    {% for w in week %}
+    <li class="{{ w.status }}" title="{{ w.d.isoformat() }}: {{ w.status }}"><span>{{ w.d.strftime('%a')[0] }}</span></li>
+    {% endfor %}
+  </ol>
+</section>
+
+{% if carry %}
+<div class="banner warn">Yesterday was missed, so half of its drill and question work rolled into today.</div>
+{% endif %}
+
+{% if complete %}
+<section class="panel done-panel">
+  <div class="done-badge">&#10003;</div>
+  <div>
+    <h2>Today's session is done</h2>
+    <p class="muted">Streak: {{ streak }} day{{ '' if streak == 1 else 's' }}. Want more? Extra practice is open.</p>
+  </div>
+  <a class="btn primary" href="/extra">Extra practice</a>
+</section>
+{% endif %}
+
+{% if not checkin and not complete %}
+<form class="panel checkin" method="post" action="/checkin">
+  <h2>Quick check-in</h2>
+  <p class="muted">Ten seconds. Body first, brain second.</p>
+  <div class="checkin-row">
+    <label>Sleep (hours)
+      <input type="number" name="sleep" min="0" max="14" step="0.5" value="7" inputmode="decimal">
+    </label>
+    <label class="toggle"><input type="checkbox" name="exercise" value="1"><span>Moved / exercised</span></label>
+    <label class="toggle"><input type="checkbox" name="water" value="1"><span>Water</span></label>
+    <button class="btn">Save</button>
+  </div>
+</form>
+{% endif %}
+
+<section class="blocks">
+  {% for b in blocks %}
+  {% set state = 'complete' if b.complete else ('current' if b.key == current else 'locked') %}
+  <a class="block {{ state }}" href="{{ '/' ~ b.key if state != 'locked' else '#' }}" {% if state == 'locked' %}aria-disabled="true"{% endif %}>
+    <div class="block-num">{% if b.complete %}&#10003;{% else %}{{ loop.index }}{% endif %}</div>
+    <div class="block-body">
+      <div class="block-title">{{ b.name }}</div>
+      <div class="block-meta">
+        {% if b.key == 'cards' %}{{ b.done }} reviewed &middot; {{ b.need - b.done }} left
+        {% else %}{{ b.done }} / {{ b.need }}{% endif %}
+        {% if state == 'locked' %} &middot; unlocks after step {{ loop.index - 1 }}{% endif %}
+      </div>
+      <div class="bar"><i style="width: {{ b.pct }}%"></i></div>
+    </div>
+    {% if state == 'current' %}<span class="btn primary sm">Start</span>{% endif %}
+  </a>
+  {% endfor %}
+</section>
+
+{% if upcoming %}
+<section class="panel">
+  <h2>Coming up</h2>
+  <ul class="upcoming">
+    {% for u in upcoming %}
+    <li><span class="date">{{ u.day.strftime('%a %b %-d') }}</span><span>{{ u.title }}</span></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}

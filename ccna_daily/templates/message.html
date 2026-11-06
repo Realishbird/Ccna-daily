@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel center msg">
+  <h1>{{ title }}</h1>
+  <p class="muted">{{ body }}</p>
+  {% if link %}<a class="btn primary" href="{{ link }}">{{ link_text }}</a>{% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,124 @@
+topic: subnetting
+domain: 1
+blueprint: "1.6"
+cards:
+  - id: sub-001
+    front: "Powers of 2 from 2^1 to 2^10?"
+    back: "2, 4, 8, 16, 32, 64, 128, 256, 512, 1024"
+  - id: sub-002
+    front: "Bit values of one octet, left to right?"
+    back: "128 64 32 16 8 4 2 1"
+  - id: sub-003
+    front: "The 9 possible values of a subnet mask octet?"
+    back: "0, 128, 192, 224, 240, 248, 252, 254, 255\n(1 to 8 bits turned on from the left)"
+  - id: sub-004
+    front: "Convert 11000000 to decimal."
+    back: "192 (128 + 64)"
+  - id: sub-005
+    front: "Convert 224 to binary."
+    back: "11100000 (128 + 64 + 32)"
+  - id: sub-006
+    front: "Convert 10101100 to decimal."
+    back: "172 (128 + 32 + 8 + 4)"
+  - id: sub-007
+    front: "Formula for usable hosts per subnet?"
+    back: "2^h - 2, where h = host bits (32 - prefix).\nMinus 2 for the network and broadcast addresses."
+  - id: sub-008
+    front: "Formula for number of subnets created?"
+    back: "2^s, where s = bits borrowed from the host portion."
+  - id: sub-009
+    front: "/24: mask, block size, usable hosts?"
+    back: "255.255.255.0, block 256, 254 hosts"
+  - id: sub-010
+    front: "/25: mask, block size, usable hosts?"
+    back: "255.255.255.128, block 128, 126 hosts"
+  - id: sub-011
+    front: "/26: mask, block size, usable hosts?"
+    back: "255.255.255.192, block 64, 62 hosts"
+  - id: sub-012
+    front: "/27: mask, block size, usable hosts?"
+    back: "255.255.255.224, block 32, 30 hosts"
+  - id: sub-013
+    front: "/28: mask, block size, usable hosts?"
+    back: "255.255.255.240, block 16, 14 hosts"
+  - id: sub-014
+    front: "/29: mask, block size, usable hosts?"
+    back: "255.255.255.248, block 8, 6 hosts"
+  - id: sub-015
+    front: "/30: mask, block size, usable hosts?"
+    back: "255.255.255.252, block 4, 2 hosts.\nClassic choice for point-to-point links."
+  - id: sub-016
+    front: "/31: what is special about it?"
+    back: "2 addresses, both usable, no network or broadcast address (RFC 3021).\nUsed on point-to-point links to save addresses."
+  - id: sub-017
+    front: "/32 is used for what?"
+    back: "A single host route, e.g. a loopback address or a host static route."
+  - id: sub-018
+    front: "/20: mask and block size in which octet?"
+    back: "255.255.240.0, block 16 in the 3rd octet, 4094 hosts"
+  - id: sub-019
+    front: "/22: mask and block size in which octet?"
+    back: "255.255.252.0, block 4 in the 3rd octet, 1022 hosts"
+  - id: sub-020
+    front: "/23: mask and block size in which octet?"
+    back: "255.255.254.0, block 2 in the 3rd octet, 510 hosts"
+  - id: sub-021
+    front: "/16 and /8 masks?"
+    back: "/16 = 255.255.0.0 (65,534 hosts)\n/8 = 255.0.0.0 (16,777,214 hosts)"
+  - id: sub-022
+    front: "Fast method: find the network address of an IP."
+    back: "1. Find the interesting octet (where the mask is not 255 or 0).\n2. Block size = 256 - mask value in that octet.\n3. Network = largest multiple of the block size that is <= the IP's octet.\n4. Octets after it become 0."
+  - id: sub-023
+    front: "Fast method: find the broadcast address."
+    back: "Next network address minus 1.\n(Network + block size - 1 in the interesting octet, all later octets 255.)"
+  - id: sub-024
+    front: "Network, broadcast and host range of 192.168.10.77/27?"
+    back: "Block 32: networks 0, 32, 64, 96...\nNetwork 192.168.10.64\nBroadcast 192.168.10.95\nHosts .65 - .94"
+  - id: sub-025
+    front: "Network and broadcast of 172.16.45.200/21?"
+    back: "Block 8 in 3rd octet: 40, 48...\nNetwork 172.16.40.0\nBroadcast 172.16.47.255"
+  - id: sub-026
+    front: "Network and broadcast of 10.10.10.130/25?"
+    back: "Network 10.10.10.128\nBroadcast 10.10.10.255\nHosts .129 - .254"
+  - id: sub-027
+    front: "Smallest prefix for 50 hosts? For 500?"
+    back: "50 hosts: /26 (62 hosts)\n500 hosts: /23 (510 hosts)"
+  - id: sub-028
+    front: "Smallest prefix for 14 hosts? For 15?"
+    back: "14 hosts: /28 (exactly 14)\n15 hosts: /27 (30)"
+  - id: sub-029
+    front: "Wildcard mask: how to get it from a subnet mask?"
+    back: "255.255.255.255 minus the subnet mask.\n/26 mask 255.255.255.192 -> wildcard 0.0.0.63"
+  - id: sub-030
+    front: "Wildcard masks for /24, /27, /30?"
+    back: "/24 = 0.0.0.255\n/27 = 0.0.0.31\n/30 = 0.0.0.3"
+  - id: sub-031
+    front: "What is VLSM?"
+    back: "Variable Length Subnet Masking: using different prefix lengths inside one major network so each subnet is sized to its needs.\nAllocate the largest subnets first to avoid overlaps."
+  - id: sub-032
+    front: "VLSM: 192.168.1.0/24 needs subnets for 100, 50, 20 hosts and 2 point-to-point links. Plan it."
+    back: "100 hosts -> 192.168.1.0/25 (.0-.127)\n50 hosts -> 192.168.1.128/26 (.128-.191)\n20 hosts -> 192.168.1.192/27 (.192-.223)\nLink 1 -> 192.168.1.224/30\nLink 2 -> 192.168.1.228/30"
+  - id: sub-033
+    front: "What is route summarization (supernetting)?"
+    back: "Combining contiguous networks into one shorter prefix that covers them all, to shrink routing tables.\nFind the common leading bits."
+  - id: sub-034
+    front: "Summarize 172.16.0.0/24 through 172.16.3.0/24."
+    back: "172.16.0.0/22\n(4 networks = 2 bits, so /24 - 2 = /22; 0 is a multiple of 4)"
+  - id: sub-035
+    front: "Summarize 10.1.4.0/24, 10.1.5.0/24, 10.1.6.0/24, 10.1.7.0/24."
+    back: "10.1.4.0/22 (4 is a multiple of 4, covers .4 - .7)"
+  - id: sub-036
+    front: "Classful ranges A, B, C (first octet) and default masks?"
+    back: "A: 1-126, /8\nB: 128-191, /16\nC: 192-223, /24\nD (multicast): 224-239\nE (experimental): 240-255\n127 is loopback."
+  - id: sub-037
+    front: "How many /27 subnets fit in a /24? /30s in a /24?"
+    back: "/27: 2^3 = 8 subnets\n/30: 2^6 = 64 subnets"
+  - id: sub-038
+    front: "Are 192.168.1.62 and 192.168.1.65 in the same /26?"
+    back: "No. /26 blocks are 0-63 and 64-127. .62 is in .0/26, .65 is in .64/26."
+  - id: sub-039
+    front: "Which address in 10.0.0.0/30 is NOT usable: 10.0.0.1, 10.0.0.2, 10.0.0.3?"
+    back: "10.0.0.3 is the broadcast. Usable: .1 and .2. Network: .0"
+  - id: sub-040
+    front: "What does 'ip subnet-zero' mean and is it on by default?"
+    back: "It allows the first subnet (all-zeros subnet) to be used. It is on by default in modern IOS, and the CCNA assumes subnet zero is usable."

@@ -1,0 +1,103 @@
+topic: subnetting
+domain: 1
+blueprint: "1.6"
+questions:
+  - id: q-sub-001
+    q: "A host has IP 192.168.5.93/27. What is its subnet's broadcast address?"
+    options: ["192.168.5.63", "192.168.5.95", "192.168.5.127", "192.168.5.255"]
+    answer: 1
+    explain: "/27 = block size 32. Subnets: .64-.95. So 93 is in 192.168.5.64/27 and the broadcast is .95."
+  - id: q-sub-002
+    q: "Which subnet mask gives at least 25 subnets from 10.0.0.0/8 while maximizing hosts per subnet?"
+    options: ["255.240.0.0", "255.248.0.0", "255.252.0.0", "255.255.0.0"]
+    answer: 1
+    explain: "25 subnets needs 5 borrowed bits (2^5 = 32). /8 + 5 = /13 = 255.248.0.0. Fewer bits would not reach 25; more bits shrinks hosts."
+  - id: q-sub-003
+    q: "Which address is a valid host address in 172.16.32.0/20?"
+    options: ["172.16.32.0", "172.16.47.255", "172.16.48.1", "172.16.40.255"]
+    answer: 3
+    explain: "/20 = block 16 in the 3rd octet: 172.16.32.0 - 172.16.47.255. .32.0 is the network, .47.255 is the broadcast, .48.1 is in the next subnet. 172.16.40.255 is inside the range and not the broadcast, so it is a valid host."
+  - id: q-sub-004
+    q: "An engineer needs a subnet for 60 hosts and wants to waste as few addresses as possible. Which prefix?"
+    options: ["/25", "/26", "/27", "/28"]
+    answer: 1
+    explain: "/26 = 62 usable hosts, the smallest that fits 60. /27 only gives 30."
+  - id: q-sub-005
+    q: "What is the wildcard mask that matches exactly the subnet 10.10.8.0/22?"
+    options: ["0.0.3.255", "0.0.7.255", "0.0.252.255", "255.255.252.0"]
+    answer: 0
+    explain: "/22 mask = 255.255.252.0. Wildcard = 255.255.255.255 - 255.255.252.0 = 0.0.3.255."
+  - id: q-sub-006
+    q: "Which single route summarizes 192.168.16.0/24, 192.168.17.0/24, 192.168.18.0/24 and 192.168.19.0/24 exactly?"
+    options: ["192.168.16.0/21", "192.168.16.0/22", "192.168.16.0/23", "192.168.0.0/16"]
+    answer: 1
+    explain: "Four /24s = 2 bits, so /22. 16 is a multiple of 4, so 192.168.16.0/22 covers .16-.19 exactly. /21 would also include .20-.23."
+  - id: q-sub-007
+    q: "Hosts A (10.1.1.20/28) and B (10.1.1.30/28) are on the same switch and VLAN. Can they communicate without a router?"
+    options: ["Yes, both are in 10.1.1.16/28", "No, A is in 10.1.1.16/28 and B is in 10.1.1.32/28", "No, .30 is the broadcast address", "Yes, because they share a VLAN regardless of subnet"]
+    answer: 0
+    explain: "/28 = block 16: 10.1.1.16 - 10.1.1.31. Both .20 and .30 are inside it (.31 is the broadcast). Same subnet, so they talk directly."
+  - id: q-sub-008
+    q: "Which TWO addresses are private (RFC 1918)?"
+    blueprint: "1.7"
+    options: ["172.31.200.1", "172.33.1.1", "192.169.1.1", "10.255.0.1", "169.254.1.1"]
+    answer: [0, 3]
+    explain: "Private: 10.0.0.0/8, 172.16.0.0/12 (172.16-172.31), 192.168.0.0/16. 172.33 and 192.169 are public; 169.254 is link-local (APIPA), not RFC 1918."
+  - id: q-sub-009
+    q: "A PC shows IP 169.254.33.7. What most likely happened?"
+    blueprint: "1.10"
+    options: ["It received a lease from a rogue DHCP server", "It could not reach a DHCP server and self-assigned an address", "Its static IP conflicts with another host", "The default gateway is down"]
+    answer: 1
+    explain: "169.254.0.0/16 is APIPA. Windows assigns it when DHCP fails."
+  - id: q-sub-010
+    q: "How many usable host addresses does 10.4.0.0/23 provide?"
+    options: ["254", "510", "512", "1022"]
+    answer: 1
+    explain: "/23 = 9 host bits. 2^9 - 2 = 510."
+  - id: q-sub-011
+    q: "A point-to-point link uses 10.0.0.8/30. Which pair of addresses can the two routers use?"
+    options: ["10.0.0.8 and 10.0.0.9", "10.0.0.9 and 10.0.0.10", "10.0.0.10 and 10.0.0.11", "10.0.0.9 and 10.0.0.11"]
+    answer: 1
+    explain: "/30 block of 4: .8 network, .9 and .10 usable, .11 broadcast."
+  - id: q-v6-001
+    topic: ipv6
+    blueprint: "1.8"
+    q: "Which is the correct shortest form of 2001:0db8:0000:0000:0001:0000:0000:0001?"
+    options: ["2001:db8::1::1", "2001:db8::1:0:0:1", "2001:db8:0:0:1::1", "2001:db8:0::1:0:0:1"]
+    answer: 1
+    explain: "Two zero runs of equal length (2 groups each). RFC 5952 says compress the FIRST longest run: 2001:db8::1:0:0:1. '::' can never appear twice."
+  - id: q-v6-002
+    topic: ipv6
+    blueprint: "1.9"
+    q: "Which IPv6 address type is automatically configured on every IPv6-enabled interface and starts with FE80?"
+    options: ["Global unicast", "Unique local", "Link-local", "Anycast"]
+    answer: 2
+    explain: "Link-local addresses (FE80::/10) are created automatically and only valid on the local link."
+  - id: q-v6-003
+    topic: ipv6
+    blueprint: "1.9"
+    q: "A router interface has MAC 0050.56aa.1b2c and uses EUI-64 with prefix 2001:db8:1:1::/64. What is the interface ID?"
+    options: ["0050:56ff:feaa:1b2c", "0250:56ff:feaa:1b2c", "0250:56aa:fffe:1b2c", "0050:56fe:ffaa:1b2c"]
+    answer: 1
+    explain: "Split the MAC: 0050.56 | aa.1b2c. Insert FFFE: 0050:56ff:feaa:1b2c. Flip the 7th bit of 00 -> 02: 0250:56ff:feaa:1b2c."
+  - id: q-v6-004
+    topic: ipv6
+    blueprint: "1.9"
+    q: "Which address range is IPv6 unique local, comparable to RFC 1918?"
+    options: ["2000::/3", "FC00::/7", "FE80::/10", "FF00::/8"]
+    answer: 1
+    explain: "FC00::/7 is unique local (FD00::/8 in practice). 2000::/3 global, FE80::/10 link-local, FF00::/8 multicast."
+  - id: q-v6-005
+    topic: ipv6
+    blueprint: "1.8"
+    q: "A router has IPv6 addresses on its interfaces but does not forward IPv6 between them or send RAs. What is missing?"
+    options: ["ipv6 enable", "ipv6 unicast-routing", "ipv6 address autoconfig", "ip routing"]
+    answer: 1
+    explain: "'ipv6 unicast-routing' (global) turns on IPv6 forwarding and router advertisements."
+  - id: q-v6-006
+    topic: ipv6
+    blueprint: "1.9"
+    q: "Which IPv6 mechanism replaces ARP?"
+    options: ["DHCPv6", "Neighbor Discovery (NS/NA)", "Router Advertisement", "ICMPv6 Echo"]
+    answer: 1
+    explain: "NDP Neighbor Solicitation and Neighbor Advertisement messages (sent to solicited-node multicast) resolve IPv6 to MAC."

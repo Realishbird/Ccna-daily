@@ -1,0 +1,83 @@
+topic: osi-tcpip
+domain: 1
+blueprint: "1.5"
+questions:
+  - id: q-fun-001
+    q: "Which TWO are characteristics of UDP?"
+    options: ["Connectionless", "Uses a three-way handshake", "Sequencing and acknowledgments", "Lower overhead than TCP", "Windowing for flow control"]
+    answer: [0, 3]
+    explain: "UDP is connectionless with a small 8-byte header. Handshake, sequencing, acks and windowing are TCP features."
+  - id: q-fun-002
+    q: "Which protocol and port does SSH use?"
+    options: ["UDP 22", "TCP 22", "TCP 23", "TCP 443"]
+    answer: 1
+    explain: "SSH is TCP 22. Telnet is TCP 23."
+  - id: q-fun-003
+    q: "At which OSI layer does a router make its forwarding decision?"
+    options: ["Layer 2", "Layer 3", "Layer 4", "Layer 7"]
+    answer: 1
+    explain: "Routers forward packets by destination IP address, a Layer 3 (Network) function."
+  - id: q-fun-004
+    topic: cabling
+    blueprint: "1.4"
+    q: |-
+      An interface shows the output below. What is the most likely cause?
+    exhibit: |-
+      GigabitEthernet0/1 is up, line protocol is up
+        Full-duplex, 1000Mb/s
+        ...
+        0 runts, 0 giants, 0 throttles
+        1832 input errors, 1790 CRC, 0 frame, 0 overrun
+        0 collisions, 0 late collision
+    options: ["Duplex mismatch with late collisions on this side", "Physical layer problem such as a bad cable or interference", "MTU mismatch", "The interface is administratively down"]
+    answer: 1
+    explain: "High CRC errors with no collisions on a full-duplex link point to a physical problem: cabling, connectors, interference. (A duplex mismatch shows late collisions on the half-duplex side.)"
+  - id: q-fun-005
+    topic: cabling
+    blueprint: "1.3"
+    q: "Two buildings are 5 km apart. Which medium is the right choice?"
+    options: ["Cat6 UTP", "Multimode fiber", "Single-mode fiber", "Coaxial cable"]
+    answer: 2
+    explain: "Single-mode fiber with lasers covers kilometers. UTP is limited to 100 m; multimode is typically hundreds of meters."
+  - id: q-fun-006
+    topic: devices-topologies
+    blueprint: "1.2"
+    q: "In a spine-leaf architecture, which statement is true?"
+    options: ["Leaf switches connect to each other in a full mesh", "Each leaf connects to every spine", "Spines connect directly to servers", "Spine switches connect to each other"]
+    answer: 1
+    explain: "Every leaf connects to every spine; leaves do not interconnect and spines do not interconnect. Servers attach to leaves."
+  - id: q-fun-007
+    topic: devices-topologies
+    blueprint: "1.1"
+    q: "Which device can inspect application traffic, block known attack signatures inline, and filter by URL?"
+    options: ["Layer 2 switch", "Next-generation firewall", "Wireless LAN controller", "Hub"]
+    answer: 1
+    explain: "An NGFW combines stateful filtering with application awareness, an inline IPS, and URL filtering."
+  - id: q-fun-008
+    topic: switching
+    blueprint: "1.13"
+    q: "A switch receives a frame whose destination MAC is not in its MAC address table. What does it do?"
+    options: ["Drops the frame", "Floods it out all ports in the same VLAN except the incoming port", "Sends it to the default gateway", "Sends an ARP request"]
+    answer: 1
+    explain: "Unknown unicast is flooded within the VLAN. The switch learns the destination when the reply comes back."
+  - id: q-fun-009
+    topic: switching
+    blueprint: "1.13"
+    q: "Which field does a switch use to build its MAC address table?"
+    options: ["Destination MAC", "Source MAC", "Destination IP", "Source IP"]
+    answer: 1
+    explain: "Switches learn from the source MAC of incoming frames."
+  - id: q-fun-010
+    topic: virtualization
+    blueprint: "1.12"
+    q: "Which feature lets one router keep separate routing tables so two customers can both use 10.0.0.0/8?"
+    options: ["VLAN", "VRF", "VTP", "VPC"]
+    answer: 1
+    explain: "VRF (Virtual Routing and Forwarding) creates multiple isolated routing tables on one router."
+  - id: q-fun-011
+    topic: wireless-basics
+    blueprint: "1.11"
+    q: "Which set of 2.4 GHz channels does not overlap?"
+    options: ["1, 5, 9", "1, 6, 11", "2, 7, 12", "1, 4, 8, 11"]
+    answer: 1
+    explain: "Channels 1, 6 and 11 are the standard non-overlapping set in the 2.4 GHz band."

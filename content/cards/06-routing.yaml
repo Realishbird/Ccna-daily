@@ -1,0 +1,59 @@
+topic: routing
+domain: 3
+blueprint: "3.1"
+cards:
+  - id: rt-001
+    front: "Parts of a routing table entry: O 10.1.1.0/24 [110/2] via 192.168.1.2, 00:01:12, G0/0"
+    back: "O = route source (OSPF)\n10.1.1.0/24 = prefix and mask\n110 = administrative distance\n2 = metric\nvia 192.168.1.2 = next hop\n00:01:12 = age\nG0/0 = outgoing interface"
+  - id: rt-002
+    front: "Routing table codes: C, L, S, S*, O, D, R, B?"
+    back: "C connected\nL local (/32 of the router's own interface IP)\nS static\nS* static default\nO OSPF\nD EIGRP\nR RIP\nB BGP"
+  - id: rt-003
+    front: "Administrative distances: connected, static, eBGP, EIGRP, OSPF, IS-IS, RIP, iBGP?"
+    back: "Connected 0\nStatic 1\neBGP 20\nEIGRP (internal) 90\nOSPF 110\nIS-IS 115\nRIP 120\nEIGRP external 170\niBGP 200\nUnusable 255"
+  - id: rt-004
+    front: "What is the gateway of last resort?"
+    back: "The default route (0.0.0.0/0) used when no more specific route matches. Shown at the top of 'show ip route'."
+  - id: rt-005
+    front: "Why does a router install a 'L' local route?"
+    back: "A /32 host route for the IP configured on its own interface, so it knows packets to that address are for itself."
+  - id: rt-006
+    blueprint: "3.2"
+    front: "Order a router uses to choose a route?"
+    back: "1. Longest prefix match (most specific) ALWAYS wins first.\n2. If two sources offer the same prefix: lowest administrative distance.\n3. Same source and prefix: lowest metric (ties can load-balance)."
+  - id: rt-007
+    blueprint: "3.2"
+    front: "Routes: 10.0.0.0/8 via A, 10.1.0.0/16 via B, 10.1.1.0/24 via C. Packet to 10.1.1.5?"
+    back: "C (the /24 is the longest match)."
+  - id: rt-008
+    blueprint: "3.2"
+    front: "Same routes: packet to 10.1.2.9? To 10.2.2.2?"
+    back: "10.1.2.9 -> B (/16).\n10.2.2.2 -> A (/8)."
+  - id: rt-009
+    blueprint: "3.2"
+    front: "OSPF and EIGRP both learn 172.16.5.0/24. Which goes in the routing table?"
+    back: "EIGRP (AD 90 beats OSPF 110). Prefix length is equal, so AD decides."
+  - id: rt-010
+    blueprint: "3.2"
+    front: "OSPF learns 172.16.5.0/25; EIGRP learns 172.16.5.0/24. Packet to 172.16.5.10?"
+    back: "OSPF's /25. Both routes are installed (different prefixes), and longest match wins before AD is considered."
+  - id: rt-011
+    blueprint: "3.2"
+    front: "OSPF metric is called? EIGRP metric is based on?"
+    back: "OSPF: cost (reference bandwidth / interface bandwidth).\nEIGRP: composite metric, by default bandwidth and delay."
+  - id: rt-012
+    blueprint: "3.2"
+    front: "Default OSPF reference bandwidth and why it matters?"
+    back: "100 Mbps. So FastEthernet, GigE and 10GigE all get cost 1. Fix with 'auto-cost reference-bandwidth 10000' (in Mbps) on every router."
+  - id: rt-013
+    front: "Command to see only the routing table entry for one destination?"
+    back: "show ip route 10.1.1.5 (shows the matching route and its details)"
+  - id: rt-014
+    front: "What does a router do with a packet that matches no route and there is no default?"
+    back: "Drops it and sends an ICMP Destination Unreachable back to the source."
+  - id: rt-015
+    front: "Static vs dynamic routing trade-offs?"
+    back: "Static: no overhead, predictable, secure; does not adapt to failures, hard to scale.\nDynamic: adapts and scales; uses CPU, memory and bandwidth, more to configure and secure."
+  - id: rt-016
+    front: "Distance vector vs link state?"
+    back: "Distance vector (RIP, EIGRP is advanced DV): learns routes from neighbors' view.\nLink state (OSPF, IS-IS): every router builds a full map (LSDB) and runs SPF (Dijkstra)."
